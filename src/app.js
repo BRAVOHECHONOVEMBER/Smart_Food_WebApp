@@ -1,10 +1,5 @@
-/**
- * Application Entry Point
- * Orchestrates the bootstrapping and state subscription
- */
-
 import { subscribe, actions } from './services/state.js';
-import { MOCK_VENDORS } from './services/mockData.js';
+import { seedVendorsWithMenus } from './services/mockData.js';
 import { Vendors } from './components/Vendors.js';
 import { Menu } from './components/Menu.js';
 import { Cart } from './components/Cart.js';
@@ -16,29 +11,22 @@ class App {
     }
 
     init() {
-        console.log('🔥 2P Grill Phase 1 Initializing...');
+        console.log('2P Grill initializing...');
 
-        // 1. Setup UI Static Events
         UI.setupGlobalEvents();
 
-        // 2. Subscribe to State Changes
         subscribe((state) => {
-            // Render Vendors list
             Vendors.render(state.vendors);
 
-            // Render Menu (if vendor is selected)
             if (state.selectedVendor) {
-                Menu.render(state.menu);
+                Menu.render();
             }
 
-            // Render Cart sidebar and badge
             Cart.render(state.cart, state.isCartOpen);
         });
 
-        // 3. Load initial data
-        actions.setVendors(MOCK_VENDORS);
+        actions.setVendors(seedVendorsWithMenus());
     }
 }
 
-// Start the app
 new App();

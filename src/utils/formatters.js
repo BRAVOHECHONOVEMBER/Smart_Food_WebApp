@@ -13,7 +13,7 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
  * @returns {string}
  */
 export const formatCurrency = (value) => {
-    return CURRENCY_FORMATTER.format(value);
+    return CURRENCY_FORMATTER.format((Number(value) || 0) / 100);
 };
 
 /**
