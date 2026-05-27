@@ -1,0 +1,22 @@
+{
+  "name": "2p-grill-refactor",
+  "version": "1.0.0",
+  "description": "A modular, high-performance food ordering platform with reactive state management.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "keywords": [
+    "vanilla-js",
+    "glassmorphism",
+    "reactive-state",
+    "food-delivery"
+  ],
+  "author": "Expert Developer",
+  "license": "MIT"
+}

@@ -1,0 +1,211 @@
+:root {
+    --primary: #ff4757;
+    --primary-hover: #ff6b81;
+    --bg-dark: #0f172a;
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --bg-glass-heavy: rgba(15, 23, 42, 0.85);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top right, #1e293b, #0f172a);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Glassmorphism Components */
+.glass-nav {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-glass);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    letter-spacing: -1px;
+}
+
+/* Buttons */
+.cart-btn {
+    position: relative;
+    cursor: pointer;
+    background: var(--bg-glass);
+    color: white;
+    border: 1px solid var(--border-glass);
+    padding: 10px 20px;
+    border-radius: 12px;
+}
+
+#cart-count {
+    background: var(--primary);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Grid Layouts */
+.vendors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, min-minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 2rem;
+}
+
+.vendor-card {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.vendor-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 1.5rem;
+}
+
+/* Sidebar */
+.glass-sidebar {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border-glass);
+    z-index: 1000;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-sidebar.active {
+    right: 0;
+}
+
+/* Utils */
+.hidden { display: none !important; }
+.full-width { width: 100%; }
+.section-title { margin-top: 3rem; margin-bottom: 1rem; font-size: 2rem; }
+
+/* Menu Items */
+.menu-item-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.item-price {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Toast */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 12px 24px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .glass-sidebar { width: 100%; right: -100%; }
+}

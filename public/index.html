@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2P Grill | Premium Food Ordering</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation Header -->
+        <header class="glass-nav">
+            <div class="container nav-content">
+                <div class="logo">
+                    <span class="logo-icon">🔥</span>
+                    <h1>2P Grill</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="cart-toggle-btn" class="cart-btn glass-card">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span id="cart-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Vendor Selection Section -->
+            <section id="vendors-section">
+                <h2 class="section-title">Select a Grill Master</h2>
+                <div id="vendors-grid" class="vendors-grid">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <!-- Menu Section (Hidden until Vendor selected) -->
+            <section id="menu-section" class="hidden">
+                <div class="menu-header">
+                    <button id="back-to-vendors" class="btn-link">
+                        <i class="fa-solid fa-arrow-left"></i> Change Vendor
+                    </button>
+                    <h2 id="current-vendor-name">Menu</h2>
+                </div>
+                <div id="menu-container">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar Cart -->
+        <aside id="cart-sidebar" class="glass-sidebar hidden">
+            <div class="sidebar-header">
+                <h3>Your Order</h3>
+                <button id="close-cart" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="cart-items" class="cart-items-list">
+                <!-- Cart items here -->
+            </div>
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">$0.00</span>
+                </div>
+                <button id="checkout-btn" class="btn-primary full-width" disabled>Checkout Now</button>
+            </div>
+        </aside>
+
+        <!-- UI Elements -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Application Logic -->
+    <script type="module" src="../src/app.js"></script>
+</body>
+</html>
