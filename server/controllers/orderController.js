@@ -56,7 +56,10 @@ const getOrderStatus = async (req, res, next) => {
         }
 
         const order = doc.data();
-        if (req.user.role === 'Customer' && order.customerId !== req.user.uid) {
+        if (
+            req.user.roles?.includes('Customer') &&
+            order.customerId !== req.user.uid
+        ) {
             return res.status(403).json({ message: 'You cannot view this order.' });
         }
 

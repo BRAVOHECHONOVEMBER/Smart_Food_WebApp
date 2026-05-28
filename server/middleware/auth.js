@@ -10,8 +10,13 @@ const auth = (roles = []) => (req, res, next) => {
 
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-        if (roles.length && !roles.includes(payload.role)) {
-            return res.status(403).json({ message: 'Insufficient permissions.' });
+        if (
+            roles.length &&
+            !roles.some(role => payload.roles?.includes(role))
+        ) {
+            return res.status(403).json({
+                message: 'Insufficient permissions.'
+            });
         }
 
         req.user = payload;
