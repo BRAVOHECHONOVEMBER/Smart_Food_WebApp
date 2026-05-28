@@ -351,8 +351,13 @@ const fileToDataUrl = (file) => new Promise((resolve, reject) => {
 const addProduct = async (event) => {
     event.preventDefault();
 
-    const form = new FormData(event.currentTarget);
-    const image = await fileToDataUrl(form.get('imageFile'));
+    const formElement = event.currentTarget;
+
+    const form = new FormData(formElement);
+
+    const image = await fileToDataUrl(
+        form.get('imageFile')
+    );
 
     await api(`/vendors/${user.vendorId}/products`, {
         method: 'POST',
@@ -365,8 +370,10 @@ const addProduct = async (event) => {
         })
     });
 
-    event.currentTarget.reset();
+    formElement.reset();
+
     showToast('Product added.');
+
     await loadDashboard();
 };
 
