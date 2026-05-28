@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders | 2P Grill</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/app-pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><i class="fas fa-utensils"></i><span>2P GRILL</span></div>
+        <div class="header-actions">
+            <a class="vendor-btn" href="/">Home</a>
+            <a class="vendor-btn" href="/checkout.html">Checkout</a>
+            <a class="vendor-btn" href="/profile.html">Profile</a>
+            <button class="vendor-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+    <main class="page-shell">
+        <h2 class="section-title"><i class="fas fa-receipt"></i> My Orders</h2>
+        <section class="panel" id="ordersPanel">Loading orders...</section>
+    </main>
+    <div class="toast-container" id="toastContainer"></div>
+    <script type="module" src="/src/frontend/orders.js"></script>
+</body>
+</html>

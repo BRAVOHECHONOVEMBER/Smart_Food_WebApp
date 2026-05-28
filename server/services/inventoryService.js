@@ -55,7 +55,7 @@ const reduceStockForItems = async ({ transaction, items, vendorId }) => {
     return hydrated;
 };
 
-const createOrder = async ({ customerId, customerName, vendorId, items, io }) => {
+const createOrder = async ({ customerId, customerName, vendorId, items, payment, io }) => {
     assertItems(items);
 
     const orderRef = collections.orders.doc();
@@ -69,6 +69,12 @@ const createOrder = async ({ customerId, customerName, vendorId, items, io }) =>
             vendorId,
             items,
             total,
+            payment: {
+                transactionId: payment?.transactionId || `TXN-${orderRef.id.toUpperCase()}`,
+                receipt: payment?.receipt || `RCP-${orderRef.id.slice(0, 8).toUpperCase()}`,
+                status: payment?.status || 'paid',
+                provider: payment?.provider || 'simulated'
+            },
             status: 'pending',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()

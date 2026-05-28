@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard | 2P Grill</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/app-pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><i class="fas fa-utensils"></i><span>2P GRILL</span></div>
+        <div class="header-actions">
+            <a class="vendor-btn" href="#overview">Dashboard</a>
+            <a class="vendor-btn" href="#inventory">Inventory</a>
+            <a class="vendor-btn" href="#orders">Orders</a>
+            <a class="vendor-btn" href="#pos">POS</a>
+            <a class="vendor-btn" href="#analytics">Analytics</a>
+            <button class="vendor-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+    <main class="page-shell">
+        <h2 class="section-title"><i class="fas fa-store"></i> Vendor Dashboard</h2>
+        <section id="overview" class="card-grid"></section>
+        <section id="orders" class="panel"></section>
+        <section id="inventory" class="panel"></section>
+        <section id="pos" class="panel"></section>
+        <section id="analytics" class="panel"></section>
+        <section id="notifications" class="panel"></section>
+    </main>
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="/src/frontend/vendor-dashboard.js"></script>
+</body>
+</html>

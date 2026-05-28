@@ -35,6 +35,23 @@ const register = async (req, res, next) => {
         };
 
         await collections.users.doc(userRecord.uid).set(user);
+
+        if (role === 'Vendor' && vendorId) {
+            await collections.vendors.doc(vendorId).set({
+                id: vendorId,
+                ownerId: userRecord.uid,
+                name,
+                email,
+                phone: req.body.phone || '',
+                address: req.body.address || '',
+                type: req.body.type || 'Food Vendor',
+                status: 'online',
+                rating: 0,
+                orders: 0,
+                createdAt: new Date().toISOString()
+            }, { merge: true });
+        }
+
         res.status(201).json({
             token: createToken(user),
             user: { uid: user.uid, email, name, role, vendorId: user.vendorId }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Signup | 2P Grill</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/app-pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><i class="fas fa-utensils"></i><span>2P GRILL</span></div>
+        <a class="vendor-btn" href="/login.html">Login</a>
+    </header>
+    <main class="auth-shell">
+        <section class="modal">
+            <div class="modal-header"><h2><i class="fas fa-store"></i> Vendor Signup</h2></div>
+            <div class="modal-body">
+                <form id="vendorSignupForm">
+                    <div class="form-group"><label>Business Name</label><input name="businessName" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+                    <div class="form-group"><label>Phone</label><input type="tel" name="phone" required></div>
+                    <div class="form-group">
+                        <label>Business Category</label>
+                        <select name="businessCategory" required>
+                            <option value="">Select category</option>
+                            <option>Food</option>
+                            <option>Drinks</option>
+                            <option>Water</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Address</label><textarea name="address" rows="3" required></textarea></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" required minlength="6"></div>
+                    <button class="submit-btn" type="submit">Create Vendor Account</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <div class="toast-container" id="toastContainer"></div>
+    <script type="module" src="/src/frontend/auth.js"></script>
+</body>
+</html>

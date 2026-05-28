@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | 2P Grill</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/app-pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><i class="fas fa-utensils"></i><span>2P GRILL</span></div>
+        <div class="header-actions">
+            <a class="vendor-btn" href="/">Home</a>
+            <a class="vendor-btn" href="/orders.html">Orders</a>
+            <a class="vendor-btn" href="/checkout.html">Checkout</a>
+            <button class="vendor-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+    <main class="page-shell">
+        <section class="modal">
+            <div class="modal-header"><h2><i class="fas fa-user"></i> Profile</h2></div>
+            <div class="modal-body" id="profilePanel"></div>
+        </section>
+    </main>
+    <script type="module" src="/src/frontend/profile.js"></script>
+</body>
+</html>

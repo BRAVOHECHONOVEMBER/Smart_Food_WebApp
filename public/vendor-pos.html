@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+Vendor POS | 2P Grill
+</title>
+
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+rel="stylesheet"
+>
+
+<link
+rel="stylesheet"
+href="/styles/app-pages.css"
+>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="logo">
+
+<i class="fas fa-utensils"></i>
+
+<span>
+2P GRILL
+</span>
+
+</div>
+
+<div class="header-actions">
+
+<a class="vendor-btn" href="/vendor-dashboard.html">
+Dashboard
+</a>
+
+<a class="vendor-btn" href="/vendor-inventory.html">
+Inventory
+</a>
+
+<a class="vendor-btn" href="/vendor-orders.html">
+Orders
+</a>
+
+<a class="vendor-btn" href="/vendor-pos.html">
+POS
+</a>
+
+<a class="vendor-btn" href="/vendor-analytics.html">
+Analytics
+</a>
+
+<button class="vendor-btn" id="logoutBtn">
+Logout
+</button>
+
+</div>
+
+</header>
+
+<main class="page-shell">
+
+<h2 class="section-title">
+
+<i class="fas fa-cash-register"></i>
+
+POS & Sales
+
+</h2>
+
+<section
+id="pos"
+class="panel"
+>
+</section>
+
+</main>
+
+<div
+class="toast-container"
+id="toastContainer"
+>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script
+type="module"
+src="/src/frontend/vendor-dashboard.js"
+>
+</script>
+
+</body>
+
+</html>

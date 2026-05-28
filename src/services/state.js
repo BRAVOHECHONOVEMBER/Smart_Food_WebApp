@@ -1,5 +1,3 @@
-import { MOCK_ORDERS, seedVendorsWithMenus } from './mockData.js';
-
 const listeners = new Set();
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -9,7 +7,7 @@ const initialState = {
     selectedVendor: null,
     menu: [],
     cart: [],
-    orders: clone(MOCK_ORDERS),
+    orders: [],
     isCartOpen: false,
     filters: {
         category: 'All',
@@ -88,7 +86,7 @@ export const selectors = {
 };
 
 export const actions = {
-    setVendors: (vendors = seedVendorsWithMenus()) => {
+    setVendors: (vendors = []) => {
         store.vendors = vendors.map(vendor => ({
             ...vendor,
             menu: vendor.menu.map(product => ({ ...product }))
