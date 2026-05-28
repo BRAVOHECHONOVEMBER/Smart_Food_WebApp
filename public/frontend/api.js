@@ -1,7 +1,8 @@
 const TOKEN_KEY = 'smartFoodToken';
 const USER_KEY = 'smartFoodUser';
 
-export const API_BASE = window.API_BASE || '';
+export const API_BASE =
+    "https://smart-food-webapp.onrender.com";
 
 export const getSession = () => ({
     token: localStorage.getItem(TOKEN_KEY) || '',
@@ -55,7 +56,7 @@ export const connectSocket = () => {
     if (!window.io) return null;
 
     const { token } = getSession();
-    return window.io(API_BASE || window.location.origin, {
+    return window.io(API_BASE, {
         auth: { token },
         transports: ['websocket', 'polling']
     });
