@@ -25,5 +25,13 @@ const auth = (roles = []) => (req, res, next) => {
         res.status(401).json({ message: 'Invalid or expired token.' });
     }
 };
+const payload = jwt.verify(
+    token,
+    process.env.JWT_SECRET || 'dev-secret'
+);
+
+console.log('AUTH DEBUG');
+console.log('payload:', payload);
+console.log('required roles:', roles);
 
 module.exports = { auth };
