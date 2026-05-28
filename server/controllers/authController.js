@@ -48,11 +48,26 @@ const register = async (req, res, next) => {
 
         } else {
 
-            userRecord = await admin.auth().createUser({
-                email,
-                password,
-                displayName: name
-            });
+            try {
+
+                userRecord = await admin.auth().createUser({
+                    email,
+                    password,
+                    displayName: name
+                });
+
+            } catch (error) {
+
+                if (error.code === 'auth/email-already-exists') {
+
+                    userRecord = await admin.auth().getUserByEmail(email);
+
+                } else {
+
+                    throw error;
+
+                }
+            }
 
             userRef = collections.users.doc(userRecord.uid);
 
