@@ -60,7 +60,7 @@ const register = async (req, res, next) => {
 
         let user;
 
-        if (existingUser.exists) {
+        if (existingUser) {
             user = existingUser.data();
 
             const roles = user.roles || [user.role];
