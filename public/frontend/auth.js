@@ -12,7 +12,7 @@ const toast = (message, type = 'success') => {
 };
 
 const redirectFor = (user) => {
-    window.location.replace(user.role === 'Vendor' ? '/vendor-dashboard.html' : '/');
+    window.location.replace(user.roles?.includes('Vendor') ? '/vendor-dashboard.html' : '/');
 };
 
 const getString = (form, name) => String(form.get(name) || '').trim();

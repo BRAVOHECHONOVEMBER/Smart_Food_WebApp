@@ -45,10 +45,16 @@ export const requireAuth = (roles = []) => {
         return session;
     }
 
-    if (roles.length && !roles.includes(session.user.role)) {
-        window.location.replace(session.user.role === 'Vendor' ? '/vendor-dashboard.html' : '/');
+    if (
+        roles.length &&
+        !roles.some(role => session.user.roles?.includes(role))
+    ) {
+        window.location.replace(
+            session.user.roles?.includes('Vendor')
+                ? '/vendor-dashboard.html'
+                : '/'
+        );
     }
-
     return session;
 };
 

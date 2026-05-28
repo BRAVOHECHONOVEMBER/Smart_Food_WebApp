@@ -93,7 +93,7 @@ const syncSocket = () => {
     socket = connectSocket();
     if (!socket) return;
 
-    if (session.user.role === 'Vendor' && session.user.vendorId) {
+    if (session.user.roles?.includes('Vendor') && session.user.vendorId) {
         socket.on('connect', () => socket.emit('vendor:join', { vendorId: session.user.vendorId }));
     } else if (session.user.uid) {
         socket.on('connect', () => socket.emit('customer:join', { customerId: session.user.uid }));

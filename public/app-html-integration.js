@@ -97,7 +97,7 @@ const syncSocket = () => {
     socket = connectSocket();
     if (!socket) return;
 
-    if (session.user.role === 'Vendor' && session.user.vendorId) {
+    if (session.user.roles?.includes('Vendor') && session.user.vendorId) {
         socket.on('connect', () => socket.emit('vendor:join', { vendorId: session.user.vendorId }));
     } else if (session.user.uid) {
         socket.on('connect', () => socket.emit('customer:join', { customerId: session.user.uid }));
@@ -127,7 +127,9 @@ const renderRoleNavigation = () => {
     const nav = document.createElement('nav');
     nav.id = 'roleNavigation';
     nav.className = 'role-navigation';
-    nav.innerHTML = session.user?.role === 'Vendor'
+    const isVendor = session.user?.roles?.includes('Vendor');
+
+    nav.innerHTML = isVendor
         ? `
             <a class="vendor-btn" href="/vendor-dashboard.html">Dashboard</a>
             <a class="vendor-btn" href="/vendor-inventory.html">Inventory</a>
@@ -390,7 +392,11 @@ window.checkout = () => {
 };
 
 window.openVendorModal = () => {
-    window.location.href = session.user?.role === 'Vendor' ? '/vendor-dashboard.html' : '/vendor-signup.html';
+    const isVendor = session.user?.roles?.includes('Vendor');
+
+    window.location.href = isVendor
+        ? '/vendor-dashboard.html'
+        : '/vendor-signup.html';
 };
 
 window.closeVendorModal = () => {
