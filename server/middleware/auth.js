@@ -8,16 +8,25 @@ const auth = (roles = []) => (req, res, next) => {
         return res.status(401).json({ message: 'Authentication token required.' });
     }
 
-    try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-        if (
-            roles.length &&
-            !roles.some(role => payload.roles?.includes(role))
-        ) {
-            return res.status(403).json({
-                message: 'Insufficient permissions.'
-            });
-        }
+	try {
+		const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
+
+		console.log('AUTH DEBUG');
+		console.log('payload:', payload);
+		console.log('required roles:', roles);
+
+		if (
+			roles.length &&
+			!roles.some(role => payload.roles?.includes(role))
+		) {
+			console.log('403 CHECK FAILED');
+			console.log('payload:', payload);
+			console.log('roles:', roles);
+
+			return res.status(403).json({
+				message: 'Insufficient permissions.'
+			});
+		}
 
         req.user = payload;
         next();
@@ -25,13 +34,5 @@ const auth = (roles = []) => (req, res, next) => {
         res.status(401).json({ message: 'Invalid or expired token.' });
     }
 };
-const payload = jwt.verify(
-    token,
-    process.env.JWT_SECRET || 'dev-secret'
-);
-
-console.log('AUTH DEBUG');
-console.log('payload:', payload);
-console.log('required roles:', roles);
 
 module.exports = { auth };
