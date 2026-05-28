@@ -27,23 +27,36 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: 'Role must be Customer or Vendor.' });
         }
 
-        let userRecord;
+        const existingSnapshot = await collections.users
+            .where('email', '==', email)
+            .limit(1)
+            .get();
 
-        try {
-            userRecord = await admin.auth().getUserByEmail(email);
-        } catch {
+        let userRecord;
+        let existingUser;
+        let userRef;
+
+        if (!existingSnapshot.empty) {
+
+            existingUser = existingSnapshot.docs[0];
+
+            const existingData = existingUser.data();
+
+            userRecord = await admin.auth().getUser(existingData.uid);
+
+            userRef = collections.users.doc(existingData.uid);
+
+        } else {
+
             userRecord = await admin.auth().createUser({
                 email,
                 password,
                 displayName: name
             });
+
+            userRef = collections.users.doc(userRecord.uid);
+
         }
-
-
-
-        const userRef = collections.users.doc(userRecord.uid);
-
-        const existingUser = await userRef.get();
 
         let user;
 
