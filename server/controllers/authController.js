@@ -5,7 +5,12 @@ const { admin, collections } = require('../config/firebase');
 const allowedRoles = new Set(['Customer', 'Vendor']);
 
 const createToken = (user) => jwt.sign(
-    { uid: user.uid, email: user.email, role: user.role, vendorId: user.vendorId || null },
+    {
+    uid: user.uid,
+    email: user.email,
+    roles: user.roles || [user.role],
+    vendorId: user.vendorId || null
+    },
     process.env.JWT_SECRET || 'dev-secret',
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
 );
@@ -22,19 +27,58 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: 'Role must be Customer or Vendor.' });
         }
 
-        const userRecord = await admin.auth().createUser({ email, password, displayName: name });
-        const passwordHash = await bcrypt.hash(password, 12);
-        const user = {
-            uid: userRecord.uid,
-            email,
-            name,
-            role,
-            vendorId: role === 'Vendor' ? vendorId : null,
-            passwordHash,
-            createdAt: new Date().toISOString()
-        };
+        let userRecord;
 
-        await collections.users.doc(userRecord.uid).set(user);
+        try {
+            userRecord = await admin.auth().getUserByEmail(email);
+        } catch {
+            userRecord = await admin.auth().createUser({
+                email,
+                password,
+                displayName: name
+            });
+        }
+
+
+
+        const userRef = collections.users.doc(userRecord.uid);
+
+        const existingUser = await userRef.get();
+
+        let user;
+
+        if (existingUser.exists) {
+            user = existingUser.data();
+
+            const roles = user.roles || [user.role];
+
+            if (!roles.includes(role)) {
+                roles.push(role);
+            }
+
+            user = {
+                ...user,
+                roles,
+                vendorId: role === 'Vendor'
+                    ? vendorId
+                    : user.vendorId || null
+            };
+
+            await userRef.update(user);
+        } else {
+            const passwordHash = await bcrypt.hash(password, 12);
+            user = {
+                uid: userRecord.uid,
+                email,
+                name,
+                roles: [role],
+                vendorId: role === 'Vendor' ? vendorId : null,
+                passwordHash,
+                createdAt: new Date().toISOString()
+            };
+
+            await userRef.set(user);
+        }
 
         if (role === 'Vendor' && vendorId) {
             await collections.vendors.doc(vendorId).set({
@@ -54,7 +98,13 @@ const register = async (req, res, next) => {
 
         res.status(201).json({
             token: createToken(user),
-            user: { uid: user.uid, email, name, role, vendorId: user.vendorId }
+            user: {
+                uid: user.uid,
+                email,
+                name,
+                roles: user.roles || [role],
+                vendorId: user.vendorId
+            }
         });
     } catch (error) {
         next(error);
@@ -85,7 +135,7 @@ const login = async (req, res, next) => {
                 uid: user.uid,
                 email: user.email,
                 name: user.name,
-                role: user.role,
+                roles: user.roles || [user.role],
                 vendorId: user.vendorId || null
             }
         });
