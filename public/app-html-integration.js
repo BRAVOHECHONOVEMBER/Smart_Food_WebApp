@@ -40,7 +40,7 @@ const normalizeProduct = (vendor, product) => ({
     icon: product.icon || product.name?.slice(0, 2).toUpperCase() || '2P',
     image: product.image || '',
     badge: product.badge || 'Available',
-    description: product.description || 'Freshly prepared and available from this vendor.'
+    description: product.description || 'Place order now'
 });
 
 const emptyMessage = (message) => `
