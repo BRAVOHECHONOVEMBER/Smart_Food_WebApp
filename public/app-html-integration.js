@@ -73,9 +73,13 @@ const loadData = async () => {
             : [];
 
         normalizedProducts.forEach(product => {
-            const category = ['food', 'drinks', 'water'].includes(product.category) ? product.category : 'food';
+            const category = ['food', 'drinks', 'water'].includes(product.category)
+                ? product.category
+                : 'food';
+
             menuItems[category].push(product);
-            if (category !== 'water') products.push(product);
+
+            products.push(product);
         });
     }
 };
