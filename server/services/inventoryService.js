@@ -1,5 +1,5 @@
 const { admin, db, collections } = require('../config/firebase');
-const { notifyLowStock, notifyNewOrder, notifyOrderStatus } = require('./notificationService');
+const { notifyLowStock, notifyNewOrder, notifyOrderStatus, notifyCustomerOrderStatus } = require('./notificationService');
 
 const assertItems = (items) => {
     if (!Array.isArray(items) || items.length === 0) {
@@ -55,7 +55,7 @@ const reduceStockForItems = async ({ transaction, items, vendorId }) => {
     return hydrated;
 };
 
-const createOrder = async ({ customerId, customerName, vendorId, items, payment, io }) => {
+const createOrder = async ({ customerId, customerName, vendorId, items, payment, delivery, io }) => {
     assertItems(items);
 
     const orderRef = collections.orders.doc();
@@ -69,10 +69,12 @@ const createOrder = async ({ customerId, customerName, vendorId, items, payment,
             vendorId,
             items,
             total,
+            delivery: delivery || null,
             payment: {
                 transactionId: payment?.transactionId || `TXN-${orderRef.id.toUpperCase()}`,
                 receipt: payment?.receipt || `RCP-${orderRef.id.slice(0, 8).toUpperCase()}`,
                 status: payment?.status || 'paid',
+                method: payment?.method || 'Card',
                 provider: payment?.provider || 'simulated'
             },
             status: 'pending',
@@ -81,12 +83,27 @@ const createOrder = async ({ customerId, customerName, vendorId, items, payment,
         };
 
         transaction.set(orderRef, payload);
+        transaction.set(collections.transactions.doc(payload.payment.transactionId), {
+            id: payload.payment.transactionId,
+            transactionId: payload.payment.transactionId,
+            receiptNumber: payload.payment.receipt,
+            vendorId,
+            customerId,
+            orderId: orderRef.id,
+            amount: total,
+            paymentMethod: payload.payment.method,
+            status: payload.payment.status,
+            source: 'Checkout',
+            items,
+            createdAt: payload.createdAt
+        });
         payload.lowStockItems = reducedItems.filter(item => item.stock <= item.threshold);
         return payload;
     });
 
     notifyNewOrder(io, order);
     order.lowStockItems.forEach(item => notifyLowStock(io, item));
+    io?.emit('inventory:updated', { vendorId, orderId: order.id });
     return order;
 };
 
@@ -125,6 +142,8 @@ const updateInventoryStock = async ({ productId, vendorId, stock, reason, io }) 
         notifyLowStock(io, payload);
     }
 
+    io?.emit('inventory:updated', { vendorId: payload.vendorId, productId, stock: payload.stock });
+
     return payload;
 };
 
@@ -152,6 +171,7 @@ const updateOrderStatus = async ({ orderId, status, io }) => {
 
     await ref.update({ status, updatedAt: order.updatedAt });
     notifyOrderStatus(io, order);
+    notifyCustomerOrderStatus(io, order);
     return order;
 };
 

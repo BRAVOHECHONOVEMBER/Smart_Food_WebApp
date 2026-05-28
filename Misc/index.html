@@ -109,16 +109,57 @@
             border: 2px solid var(--burgundy);
         }
 
-        .vendor-btn {
-            background: transparent;
-            color: var(--yellow);
-            border: 2px solid var(--yellow);
-            padding: 8px 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+			.vendor-btn{
+
+			display:flex;
+
+			align-items:center;
+
+			justify-content:center;
+
+			gap:10px;
+
+			height:54px;
+
+			padding:0 26px;
+
+			border-radius:999px;
+
+			border:
+			2px solid var(--yellow);
+
+			background:transparent;
+
+			color:var(--yellow);
+
+			cursor:pointer;
+
+			font-weight:700;
+
+			font-size:16px;
+
+			line-height:1;
+
+			white-space:nowrap;
+
+			transition:.25s ease;
+
+			text-decoration:none;
+
+			}
+
+			.vendor-btn:hover{
+
+			background:var(--yellow);
+
+			color:var(--burgundy-dark);
+
+			transform:translateY(-2px);
+
+			box-shadow:
+			0 8px 20px rgba(255,215,0,.22);
+
+			}
 
         .vendor-btn:hover {
             background: var(--yellow);

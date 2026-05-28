@@ -1,5 +1,5 @@
 import { api, connectSocket, getSession, logout as clearSession } from './frontend/api.js';
-import { getCart, setCart, clearCart } from './frontend/cartStore.js';
+import { getCart, setCart } from './frontend/cartStore.js';
 
 let vendors = [];
 let menuItems = { food: [], drinks: [], water: [] };
@@ -16,64 +16,7 @@ if (!session.token || !session.user) {
 
 const money = (amount) => `NGN ${Number(amount || 0).toLocaleString()}`;
 const allMenuProducts = () => Object.values(menuItems).flat();
-const updateLiveStock = () => {
-
-const allProducts =
-allMenuProducts();
-
-console.log(
-'ALL PRODUCTS:',
-allProducts
-);
-
-const liveStock =
-allProducts.reduce(
-
-(total,item)=>{
-
-const stock =
-Number(item.stock || 0);
-
-console.log(
-'PRODUCT:',
-item.name,
-'STOCK:',
-stock
-);
-
-return total + stock;
-
-},
-
-0
-
-);
-
-console.log(
-'TOTAL LIVE STOCK:',
-liveStock
-);
-
-const counter =
-document.getElementById(
-'liveStockCounter'
-);
-
-console.log(
-'COUNTER:',
-counter
-);
-
-if(counter){
-
-counter.textContent =
-liveStock;
-
-}
-
-};
 const findProduct = (id) => [...allMenuProducts(), ...products].find(item => item.id === id);
-const byVendorName = (name) => vendors.find(vendor => vendor.name === name);
 
 const normalizeVendor = (vendor) => ({
     id: vendor.id,
@@ -86,16 +29,17 @@ const normalizeVendor = (vendor) => ({
 });
 
 const normalizeProduct = (vendor, product) => ({
-    id: product.id,
+    id: product.productId || product.id,
+    productId: product.productId || product.id,
     name: product.name || 'Unnamed Product',
     price: Number(product.price || 0),
     stock: Number(product.stock ?? product.inventory?.stock ?? product.quantity ?? 0),
     vendor: vendor.name,
     vendorId: vendor.id,
     category: String(product.category || 'food').toLowerCase(),
-    icon: product.icon || product.image || product.name?.slice(0, 2).toUpperCase() || '2P',
+    icon: product.icon || product.name?.slice(0, 2).toUpperCase() || '2P',
     image: product.image || '',
-    badge: product.badge || product.status || 'Available',
+    badge: product.badge || 'Available',
     description: product.description || 'Freshly prepared and available from this vendor.'
 });
 
@@ -106,6 +50,14 @@ const emptyMessage = (message) => `
     </div>
 `;
 
+const updateLiveStock = () => {
+    const counter = document.getElementById('liveStockCounter');
+    if (!counter) return;
+
+    const totalStock = allMenuProducts().reduce((total, item) => total + Number(item.stock || 0), 0);
+    counter.textContent = totalStock;
+};
+
 const loadData = async () => {
     vendors = [];
     products = [];
@@ -114,18 +66,27 @@ const loadData = async () => {
     const remoteVendors = await api('/vendors');
     vendors = Array.isArray(remoteVendors) ? remoteVendors.map(normalizeVendor) : [];
 
-    for(const vendor of vendors){
+    for (const vendor of vendors) {
         const remoteProducts = await api(`/vendors/${vendor.id}/products`);
-        const normalized = Array.isArray(remoteProducts)
+        const normalizedProducts = Array.isArray(remoteProducts)
             ? remoteProducts.map(product => normalizeProduct(vendor, product))
             : [];
 
-        normalized.forEach(product => {
+        normalizedProducts.forEach(product => {
             const category = ['food', 'drinks', 'water'].includes(product.category) ? product.category : 'food';
             menuItems[category].push(product);
             if (category !== 'water') products.push(product);
         });
     }
+};
+
+const refreshData = async () => {
+    await loadData();
+    renderMenu();
+    renderVendors();
+    renderProducts();
+    renderVendorFilters();
+    updateLiveStock();
 };
 
 const syncSocket = () => {
@@ -134,21 +95,23 @@ const syncSocket = () => {
 
     if (session.user.role === 'Vendor' && session.user.vendorId) {
         socket.on('connect', () => socket.emit('vendor:join', { vendorId: session.user.vendorId }));
+    } else if (session.user.uid) {
+        socket.on('connect', () => socket.emit('customer:join', { customerId: session.user.uid }));
     }
 
-    socket.on('vendor:new-order', order => {
-        showToast(`New order received: ${order.id}`, 'success');
-        showStockNotification('New order', order.status || 'pending');
-    });
-
+    socket.on('products:updated', refreshData);
+    socket.on('inventory:updated', refreshData);
     socket.on('vendor:low-stock', item => {
         showToast(`Low stock alert: ${item.name || item.productId}`, 'warning');
         showStockNotification(item.name || item.productId, `${item.stock} left`);
         updateLocalStock(item.productId, item.stock);
     });
-
     socket.on('vendor:order-status', order => {
         showToast(`Order ${order.id} is now ${order.status}.`, 'success');
+        showStockNotification(`Order ${order.id}`, order.status);
+    });
+    socket.on('customer:order-status', order => {
+        showToast(`Your order ${order.id} is now ${order.status}.`, 'success');
         showStockNotification(`Order ${order.id}`, order.status);
     });
 };
@@ -157,16 +120,16 @@ const renderRoleNavigation = () => {
     const headerActions = document.querySelector('.header-actions');
     if (!headerActions || document.getElementById('roleNavigation')) return;
 
-    const nav = document.createElement('div');
+    const nav = document.createElement('nav');
     nav.id = 'roleNavigation';
-    nav.className = 'header-actions';
+    nav.className = 'role-navigation';
     nav.innerHTML = session.user?.role === 'Vendor'
         ? `
             <a class="vendor-btn" href="/vendor-dashboard.html">Dashboard</a>
-            <a class="vendor-btn" href="/vendor-dashboard.html#inventory">Inventory</a>
-            <a class="vendor-btn" href="/vendor-dashboard.html#orders">Orders</a>
-            <a class="vendor-btn" href="/vendor-dashboard.html#pos">POS</a>
-            <a class="vendor-btn" href="/vendor-dashboard.html#analytics">Analytics</a>
+            <a class="vendor-btn" href="/vendor-inventory.html">Inventory</a>
+            <a class="vendor-btn" href="/vendor-orders.html">Orders</a>
+            <a class="vendor-btn" href="/vendor-pos.html">POS</a>
+            <a class="vendor-btn" href="/vendor-analytics.html">Analytics</a>
             <button class="vendor-btn" onclick="logout()">Logout</button>
         `
         : `
@@ -187,6 +150,7 @@ const updateLocalStock = (productId, stock) => {
     products = products.map(product => product.id === productId ? { ...product, stock } : product);
     renderMenu();
     renderProducts();
+    updateLiveStock();
 };
 
 window.toggleCategory = (header) => {
@@ -203,115 +167,40 @@ window.toggleCategory = (header) => {
 };
 
 window.renderMenu = () => {
+    Object.keys(menuItems).forEach(category => {
+        const container = document.getElementById(`${category}-menu`);
+        if (!container) return;
 
-Object.keys(menuItems).forEach(category => {
+        if (!menuItems[category].length) {
+            container.innerHTML = emptyMessage('No products available');
+            return;
+        }
 
-const container =
-document.getElementById(
-`${category}-menu`
-);
+        container.innerHTML = menuItems[category].map(item => `
+            <div class="menu-item" onclick="addToCart('${item.id}', '${category}')">
+                <div class="menu-product">
+                    ${item.image
+                        ? `<img class="menu-image" src="${item.image}" alt="${item.name}">`
+                        : `<div class="menu-image menu-image-fallback">${item.icon}</div>`}
+                    <div class="menu-text">
+                        <div class="item-name">${item.name}</div>
+                        <div class="vendor-name">${item.vendor}</div>
+                        <div class="item-price">${money(item.price)}</div>
+                        <div class="stock-badge ${getStockClass(item.stock)}"><i class="fas fa-box"></i>${item.stock} left</div>
+                    </div>
+                    <div class="menu-right">
+                        <button class="add-btn" ${item.stock <= 0 ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${item.id}', '${category}')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    });
 
-if (!container) return;
-
-if (!menuItems[category].length) {
-
-container.innerHTML =
-emptyMessage(
-'No products available'
-);
-
-return;
-
-}
-
-container.innerHTML =
-menuItems[category]
-.map(item => `
-
-<div
-class="menu-item"
-onclick="
-addToCart(
-'${item.id}',
-'${category}'
-)
-"
->
-
-<div class="menu-product">
-
-<img
-class="menu-image"
-src="${
-item.image ||
-'/images/default-food.png'
-}"
-alt="${item.name}"
-onerror="
-this.src='/images/default-food.png'
-"
-/>
-
-<div class="menu-text">
-
-<div class="item-name">
-${item.name}
-</div>
-
-<div class="vendor-name">
-${item.vendor || 'Vendor'}
-</div>
-
-<div class="item-price">
-${money(item.price)}
-</div>
-
-<div class="
-stock-badge
-${getStockClass(item.stock)}
-">
-
-<i class="fas fa-box"></i>
-
-${item.stock} left
-
-</div>
-
-</div>
-
-<div class="menu-right">
-
-<button
-class="add-btn"
-${item.stock <= 0
-? 'disabled'
-: ''
-}
-onclick="
-event.stopPropagation();
-
-addToCart(
-'${item.id}',
-'${category}'
-)
-"
->
-
-<i class="fas fa-plus"></i>
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-`).join('');
-
-});
-updateLiveStock();
+    updateLiveStock();
 };
+
 window.getStockClass = (stock) => {
     if (stock > 20) return 'stock-high';
     if (stock > 10) return 'stock-medium';
@@ -339,18 +228,7 @@ window.renderVendors = () => {
                 <div class="vendor-stats">
                     <div class="stat"><div class="stat-value">${vendor.rating.toFixed(1)}</div><div class="stat-label">Rating</div></div>
                     <div class="stat"><div class="stat-value">${vendor.orders.toLocaleString()}</div><div class="stat-label">Orders</div></div>
-                    <div class="stat">
-					<div class="stat-value">
-					${Object.values(menuItems)
-					.flat()
-					.filter(
-					item => item.vendorId === vendor.id
-					).length}
-					</div>
-					<div class="stat-label">
-					Items
-					</div>
-					</div>
+                    <div class="stat"><div class="stat-value">${allMenuProducts().filter(item => item.vendorId === vendor.id).length}</div><div class="stat-label">Items</div></div>
                 </div>
             </div>
         </div>
@@ -371,12 +249,9 @@ window.renderProducts = () => {
     grid.innerHTML = filtered.map(product => `
         <div class="product-card">
             <div class="product-image">
-                ${product.image ? `<img src="${product.image}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;">` : product.icon}
+                ${product.image ? `<img src="${product.image}" alt="${product.name}">` : `<span>${product.icon}</span>`}
                 <span class="product-badge">${product.badge}</span>
-                <div class="stock-indicator">
-                    <div class="stock-dot" style="background: ${getStockColor(product.stock)}"></div>
-                    <span>${product.stock} in stock</span>
-                </div>
+                <div class="stock-indicator"><div class="stock-dot" style="background:${getStockColor(product.stock)}"></div><span>${product.stock} in stock</span></div>
             </div>
             <div class="product-details">
                 <div class="product-vendor">${product.vendor}</div>
@@ -409,15 +284,14 @@ window.renderVendorFilters = () => {
 
 window.filterProducts = (vendor) => {
     currentFilter = vendor;
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', (vendor === 'all' && btn.textContent === 'All Vendors') || btn.textContent === vendor);
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.classList.toggle('active', (vendor === 'all' && button.textContent === 'All Vendors') || button.textContent === vendor);
     });
     renderProducts();
 };
 
 window.addToCart = (itemId, category) => {
-    const item = menuItems[category]?.find(menuItem => menuItem.id === itemId);
-    addCartItem(item);
+    addCartItem(menuItems[category]?.find(item => item.id === itemId));
 };
 
 window.addProductToCart = (productId) => {
@@ -426,7 +300,7 @@ window.addProductToCart = (productId) => {
 
 const addCartItem = (item) => {
     if (!item || item.stock <= 0) {
-        showToast('Item out of stock!', 'error');
+        showToast('Item out of stock.', 'error');
         return;
     }
 
@@ -434,7 +308,7 @@ const addCartItem = (item) => {
     const requestedQuantity = existing ? existing.quantity + 1 : 1;
 
     if (requestedQuantity > item.stock) {
-        showToast('Maximum stock reached!', 'warning');
+        showToast('Maximum stock reached.', 'warning');
         return;
     }
 
@@ -444,7 +318,7 @@ const addCartItem = (item) => {
 
     setCart(cart);
     updateCart();
-    showToast(`${item.name} added to cart!`);
+    showToast(`${item.name} added to cart.`);
 };
 
 window.updateCart = () => {
@@ -459,14 +333,8 @@ window.updateCart = () => {
     if (cartTotal) cartTotal.textContent = money(total);
     if (!cartItems || !cartFooter) return;
 
-    if (cart.length === 0) {
-        cartItems.innerHTML = `
-            <div class="empty-cart">
-                <i class="fas fa-shopping-basket"></i>
-                <h3>Your cart is empty</h3>
-                <p>Add items from the menu to get started</p>
-            </div>
-        `;
+    if (!cart.length) {
+        cartItems.innerHTML = '<div class="empty-cart"><i class="fas fa-shopping-basket"></i><h3>Your cart is empty</h3><p>Add items from the menu to get started</p></div>';
         cartFooter.style.display = 'none';
         return;
     }
@@ -479,7 +347,7 @@ window.updateCart = () => {
                 <div class="cart-item-vendor">${item.vendor}</div>
                 <div class="cart-item-controls">
                     <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                    <span style="font-weight: 700;">${item.quantity}</span>
+                    <span>${item.quantity}</span>
                     <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
                 </div>
             </div>
@@ -498,7 +366,7 @@ window.updateQuantity = (itemId, change) => {
     if (nextQuantity <= 0) {
         cart = cart.filter(cartItem => cartItem.id !== itemId);
     } else if (nextQuantity > source.stock) {
-        showToast('Maximum stock reached!', 'warning');
+        showToast('Maximum stock reached.', 'warning');
         return;
     } else {
         cart = cart.map(cartItem => cartItem.id === itemId ? { ...cartItem, quantity: nextQuantity } : cartItem);
@@ -513,16 +381,12 @@ window.toggleCart = () => {
 };
 
 window.checkout = () => {
-    if (cart.length === 0) return;
+    if (!cart.length) return;
     window.location.href = '/checkout.html';
 };
 
 window.openVendorModal = () => {
-    if (session.user?.role === 'Vendor') {
-        window.location.href = '/vendor-dashboard.html';
-        return;
-    }
-    window.location.href = '/vendor-signup.html';
+    window.location.href = session.user?.role === 'Vendor' ? '/vendor-dashboard.html' : '/vendor-signup.html';
 };
 
 window.closeVendorModal = () => {
@@ -536,7 +400,7 @@ window.registerVendor = (event) => {
 
 window.logout = () => {
     clearSession();
-    if (socket) socket.disconnect();
+    socket?.disconnect();
     window.location.replace('/login.html');
 };
 
@@ -554,78 +418,39 @@ window.showToast = (message, type = 'success') => {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-
     const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle' };
     const colors = { success: '#28a745', error: '#dc3545', warning: '#ffc107' };
-
-    toast.innerHTML = `
-        <i class="fas ${icons[type] || icons.success}" style="color: ${colors[type] || colors.success}"></i>
-        <span style="font-weight: 600;">${message}</span>
-    `;
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fas ${icons[type] || icons.success}" style="color:${colors[type] || colors.success}"></i><span>${message}</span>`;
 
     container.appendChild(toast);
-    window.setTimeout(() => {
-        toast.style.animation = 'toastSlide 0.3s ease reverse';
-        window.setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    window.setTimeout(() => toast.remove(), 3200);
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
     renderRoleNavigation();
 
     try {
-        await loadData();
+        await refreshData();
     } catch (error) {
         vendors = [];
         products = [];
         menuItems = { food: [], drinks: [], water: [] };
-        showToast('Unable to load Firestore data.', 'error');
+        renderMenu();
+        renderVendors();
+        renderProducts();
+        renderVendorFilters();
+        showToast('Unable to load menu data.', 'error');
     }
 
-		renderMenu();
-
-		renderVendors();
-
-		renderProducts();
-
-		renderVendorFilters();
-
-		updateCart();
-
-		syncSocket();
-
-		updateLiveStock();
-
-		socket.on(
-
-		'products:updated',
-
-		async ()=>{
-
-		await loadData();
-
-		renderMenu();
-
-		renderVendors();
-
-		renderProducts();
-
-		renderVendorFilters();
-
-		updateLiveStock();
-
-		}
-
-		);
-
-    window.setTimeout(() => document.querySelector('.category-header')?.click(), 500);
+    updateCart();
+    syncSocket();
+    window.setTimeout(() => document.querySelector('.category-header')?.click(), 400);
 
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
             document.getElementById('cartSidebar')?.classList.remove('open');
         }
     });
-
 });

@@ -28,6 +28,7 @@ const recordPosSale = async ({ vendorId, cashierId, items, paymentMethod, io }) 
     });
 
     sale.lowStockItems.forEach(item => notifyLowStock(io, item));
+    io?.emit('inventory:updated', { vendorId });
     return sale;
 };
 

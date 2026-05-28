@@ -9,6 +9,7 @@ const placeOrder = async (req, res, next) => {
             vendorId: req.body.vendorId,
             items: req.body.items || [],
             payment: req.body.payment,
+            delivery: req.body.delivery,
             io: req.app.get('io')
         });
 

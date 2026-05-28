@@ -1,4 +1,4 @@
-const { vendorRoom } = require('../services/notificationService');
+const { vendorRoom, customerRoom } = require('../services/notificationService');
 
 const initSocket = (io) => {
     io.on('connection', (socket) => {
@@ -8,6 +8,14 @@ const initSocket = (io) => {
 
         socket.on('vendor:leave', ({ vendorId }) => {
             if (vendorId) socket.leave(vendorRoom(vendorId));
+        });
+
+        socket.on('customer:join', ({ customerId }) => {
+            if (customerId) socket.join(customerRoom(customerId));
+        });
+
+        socket.on('customer:leave', ({ customerId }) => {
+            if (customerId) socket.leave(customerRoom(customerId));
         });
     });
 };

@@ -15,10 +15,12 @@ const overview = async (req, res, next) => {
 
         res.json({
             overview: {
+                totalOrders: orderList.length,
                 openOrders: orderList.filter(order => ['pending', 'accepted', 'preparing'].includes(order.status)).length,
                 completedOrders: orderList.filter(order => order.status === 'completed').length,
                 lowStockItems: inventoryList.filter(item => item.stock <= item.threshold).length,
-                revenueToday: sales.daily.total
+                revenueToday: sales.daily.total,
+                totalRevenue: sales.monthly.total
             },
             inventory: inventoryList,
             orders: orderList,
