@@ -1,4 +1,4 @@
-import { getSession } from './api.js';
+import { getSession } from '/frontend/api.js';
 
 const session = getSession();
 
