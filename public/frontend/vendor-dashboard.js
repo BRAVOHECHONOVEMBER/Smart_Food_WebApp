@@ -3,6 +3,20 @@ import { api, connectSocket, getSession, logout, requireAuth } from './api.js';
 requireAuth(['Vendor']);
 
 const { user } = getSession();
+const activeRole =
+    localStorage.getItem(
+        'activeRole'
+    );
+
+if (
+    activeRole !== 'Vendor'
+) {
+
+    window.location.replace(
+        '/role-selector.html'
+    );
+
+}
 const page = {
     overview: document.getElementById('overview'),
     orders: document.getElementById('orders'),

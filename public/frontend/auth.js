@@ -11,10 +11,48 @@ const toast = (message, type = 'success') => {
     setTimeout(() => node.remove(), 3200);
 };
 
-const redirectFor = (user) => {
-    window.location.replace(user.roles?.includes('Vendor') ? '/vendor-dashboard.html' : '/');
-};
+    const redirectFor = (user) => {
 
+        const roles = user.roles || [];
+
+        if (
+            roles.includes('Customer') &&
+            roles.includes('Vendor')
+        ) {
+
+            window.location.replace(
+                '/role-selector.html'
+            );
+
+            return;
+
+        }
+
+        if (
+            roles.includes('Vendor')
+        ) {
+
+            localStorage.setItem(
+                'activeRole',
+                'Vendor'
+            );
+
+            window.location.replace(
+                '/vendor-dashboard.html'
+            );
+
+            return;
+
+        }
+
+        localStorage.setItem(
+            'activeRole',
+            'Customer'
+        );
+
+        window.location.replace('/');
+
+    };
 const getString = (form, name) => String(form.get(name) || '').trim();
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
