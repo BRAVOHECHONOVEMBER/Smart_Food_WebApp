@@ -15,25 +15,36 @@
 
     <div class="role-selector-container">
 
-        <div class="role-selector-card">
+	<div class="role-selector-card">
 
-            <h2>Select Account Type</h2>
+		<div class="role-logo">
+			<i class="fas fa-utensils"></i>
+			<span>2P GRILL</span>
+		</div>
 
-            <p>
-                Choose how you want to continue.
-            </p>
+		<h2>Select Account Type</h2>
 
-            <button id="customerBtn">
-                Customer Account
-            </button>
+		<p>
+			Choose how you would like to continue.
+		</p>
 
-            <button id="vendorBtn">
-                Vendor Account
-            </button>
+		<div class="role-options">
 
-        </div>
+			<button id="customerBtn" class="role-btn">
+				<i class="fas fa-user"></i>
+				<span>Customer Account</span>
+				<small>Browse menus and place orders</small>
+			</button>
 
-    </div>
+			<button id="vendorBtn" class="role-btn">
+				<i class="fas fa-store"></i>
+				<span>Vendor Account</span>
+				<small>Manage products and sales</small>
+			</button>
+
+		</div>
+
+	</div>
 
     <script type="module" src="./role-selector.js"></script>
 
