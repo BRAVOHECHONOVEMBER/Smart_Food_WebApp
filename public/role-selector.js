@@ -4,40 +4,42 @@ const session = getSession();
 
 if (!session?.user) {
 
-```
-window.location.replace('/login.html');
-```
+    window.location.replace(
+        '/login.html'
+    );
 
 }
 
 document
-.getElementById('customerBtn')
-?.addEventListener('click', () => {
+    .getElementById('customerBtn')
+    ?.addEventListener(
+        'click',
+        () => {
 
-```
-    localStorage.setItem(
-        'activeRole',
-        'Customer'
+            localStorage.setItem(
+                'activeRole',
+                'Customer'
+            );
+
+            window.location.replace('/');
+
+        }
     );
-
-    window.location.replace('/');
-
-});
-```
 
 document
-.getElementById('vendorBtn')
-?.addEventListener('click', () => {
+    .getElementById('vendorBtn')
+    ?.addEventListener(
+        'click',
+        () => {
 
-```
-    localStorage.setItem(
-        'activeRole',
-        'Vendor'
+            localStorage.setItem(
+                'activeRole',
+                'Vendor'
+            );
+
+            window.location.replace(
+                '/vendor-dashboard.html'
+            );
+
+        }
     );
-
-    window.location.replace(
-        '/vendor-dashboard.html'
-    );
-
-});
-```
