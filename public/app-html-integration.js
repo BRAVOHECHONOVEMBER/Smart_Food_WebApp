@@ -127,7 +127,8 @@ const renderRoleNavigation = () => {
     const nav = document.createElement('nav');
     nav.id = 'roleNavigation';
     nav.className = 'role-navigation';
-    const isVendor = session.user?.roles?.includes('Vendor');
+    const activeRole = localStorage.getItem("activeRole");
+    const isVendor = activeRole === "Vendor";
 
     nav.innerHTML = isVendor
         ? `
