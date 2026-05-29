@@ -10,10 +10,14 @@
 
     <style>
         :root {
-        --burgundy: #C97A32;
-        --burgundy-light: #D9924F;
-        --burgundy-dark: #A85E1F;
+
+    --burgundy: #A84F0F;
+    --burgundy-light: #C86A1A;
+    --burgundy-dark: #7A3508;
             --yellow: #ffd700;
+            text-shadow:
+    .2px .2px 0 #5E2F0C,
+    .2px .2px .2px rgba(0,0,0,0.3);
             --yellow-light: #ffe44d;
             --yellow-dark: #ccac00;
             --white: #f4efe8;
@@ -38,7 +42,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-            background: #d6cdc3;
+            background: #F6F0E6;
 
             color: #333;
 
@@ -203,7 +207,9 @@
             border-radius: var(--radius-md);
             margin-bottom: 24px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+            box-shadow:
+            0 8px 20px rgba(0,0,0,0.15),
+            0 0 0 2px rgba(255,215,0,0.3);
         }
 
         .sidebar-header h2 {
@@ -232,6 +238,11 @@
         }
 
         .category-header {
+            border: 2px solid var(--yellow);
+
+            box-shadow:
+                0 4px 10px rgba(0,0,0,0.15),
+                0 0 0 2px rgba(255,215,0,0.25);
             background: linear-gradient(135deg, var(--burgundy) 0%, var(--burgundy-light) 100%);
             color: var(--white);
             padding: 16px 20px;
@@ -406,6 +417,11 @@
             overflow: hidden;
             box-shadow: var(--shadow-lg);
             border-bottom: 4px solid var(--yellow);
+            border: 2px solid var(--yellow);
+
+            box-shadow:
+                0 10px 25px rgba(0,0,0,0.15),
+                0 0 0 2px rgba(255,215,0,0.25);
         }
 
         .hero-section::before {
@@ -443,6 +459,16 @@
 
         /* Section Title */
         .section-title {
+            padding: 12px 18px;
+
+            border: .2px solid var(--yellow);
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 2px 6px rgba(0,0,0,0.12);
+
+            background: rgba(255,255,255,0.6);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -455,11 +481,8 @@
         .section-title i {
             color: var(--yellow-dark);
             font-size: 1.8rem;
-                    text-shadow:
-            -1px -1px 0 #000,
-            1px -1px 0 #000,
-            -1px  1px 0 #000,
-            1px  1px 0 #000;
+            text-shadow:
+                1 2px 4px rgba(0,0,0,0.15);
         }
 
         /* Vendor Grid */

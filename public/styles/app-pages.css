@@ -1,9 +1,10 @@
 :root {
-    --burgundy: #C97A32;
-    --burgundy-light: #D9924F;
-    --burgundy-dark: #A85E1F;
-    --gold: #ffd700;
-    --gold-soft: #ffe680;
+
+    --burgundy: #A84F0F;
+    --burgundy-light: #C86A1A;
+    --burgundy-dark: #7A3508;
+--gold: #ffd700;
+--gold-soft: #ffe680;
     --page-bg: linear-gradient(
 					135deg,
 					#f8f5ef 0%,
@@ -65,9 +66,9 @@ a {
 
     color: var(--gold);
 
-    -webkit-text-stroke: 1px #000;
+    -webkit-text-stroke: .2px #000;
 
-    font-weight: 900;
+    font-weight: 500;
 }
 
 .logo i,
