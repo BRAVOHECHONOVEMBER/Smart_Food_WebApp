@@ -1,8 +1,9 @@
 :root {
 
-    --burgundy: #A84F0F;
-    --burgundy-light: #C86A1A;
-    --burgundy-dark: #7A3508;
+    --burgundy: #800020;
+    --burgundy-light: #a31545;
+    --burgundy-dark: #5c0017;
+
 --gold: #ffd700;
 --gold-soft: #ffe680;
     --page-bg: linear-gradient(
