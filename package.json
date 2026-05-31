@@ -1,7 +1,7 @@
 {
   "name": "smart-food-ordering-system",
   "version": "1.0.0",
-  "description": "Smart multi-vendor food ordering and inventory synchronization system for 2P Grill.",
+  "description": "Smart multi-vendor food ordering and inventory synchronization system for P-Grills.",
   "main": "server/server.js",
   "scripts": {
     "dev": "nodemon server/server.js",

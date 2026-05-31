@@ -2,7 +2,7 @@ export const MOCK_VENDORS = [
     {
         id: 'vendor-charcoal-master',
         name: 'The Charcoal Master',
-        description: 'Premium wood-fired steaks, ribs, and smoked sides from 2P Grill.',
+        description: 'Premium wood-fired steaks, ribs, and smoked sides from P-Grills.',
         image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
         rating: 4.9,
         status: 'open',
